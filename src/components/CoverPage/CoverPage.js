@@ -22,10 +22,6 @@ const CoverPage = () => {
           <Link to="/login" className="button bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-all duration-200">
             Login
           </Link>
-          {/* Sign Up Link */}
-          <Link to="/signup" className="button bg-white text-green-600 py-2 px-4 rounded border border-green-600 hover:bg-green-600 hover:text-white transition-all duration-200">
-            Sign Up
-          </Link>
         </nav>
       </header>
 
@@ -47,7 +43,7 @@ const CoverPage = () => {
             <h4 className="mt-4 text-lg text-green-500">Collaborate, Create, and Innovate Together</h4>
             <div className="mt-6">
               {/* Primary Call-to-Action */}
-              <Link to="/signup" className="button btn-lg bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-transform transform hover:scale-105 duration-300">
+              <Link to="/login" className="button btn-lg bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-transform transform hover:scale-105 duration-300">
                 Start Solving
               </Link>
             </div>
