@@ -1,0 +1,125 @@
+.cover-page {
+  position: relative;
+  flex-grow: 1;
+  background: url('../../assets/img/CoverPageBg.jpg') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height */
+  width: 100%;
+  color: white;
+  overflow: hidden;
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better readability */
+  z-index: 1; /* Ensures the overlay is on top */
+}
+
+.navbr{
+  width: 100vw; /* Ensures full width */
+  padding: 0 20px; /* Adds slight padding inside the header */
+  box-sizing: border-box;
+}
+
+.content {
+  position: relative;
+  z-index: 10; /* Content is above the overlay */
+}
+
+.logo {
+  width: 48px; /* Logo size */
+}
+
+.headline {
+  font-size: 2.5rem;
+  margin: 0.5rem 0;
+  animation: fadeIn 1s;
+  color: white; /* Ensures headline is visible */
+}
+
+.subheadline {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: white; /* Keeps subheadline readable */
+}
+
+.custom-image-width{
+  width: 34rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button.primary {
+  background-color: #38a169; /* green-500 */
+  font-size: 1.1rem;
+}
+
+.button.primary:hover {
+  background-color: #2f855a; /* green-700 */
+  transform: scale(1.05); /* Subtle scale effect */
+}
+
+.button.secondary {
+  background-color: #3182ce; /* blue-500 */
+}
+
+.button.secondary:hover {
+  background-color: #2b6cb0; /* blue-700 */
+  transform: scale(1.05); /* Subtle scale effect */
+}
+
+.features, .testimonials {
+  background: rgba(255, 255, 255, 0.1); /* Light background for sections */
+  padding: 20px;
+  margin-top: 2rem;
+  border-radius: 10px;
+}
+
+.feature-cards {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.2); /* Light card background */
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  margin: 0 10px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
