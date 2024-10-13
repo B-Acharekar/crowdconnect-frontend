@@ -169,12 +169,6 @@ const LoginSignup = () => {
             aria-label="Password"
           />
         </div>
-
-        {action === 'Login' && (
-          <div className="text-right text-sm text-gray-500">
-            <a href="/">Forgot password?</a>
-          </div>
-        )}
       </div>
 
       {errorMessage && (
@@ -215,9 +209,9 @@ const LoginSignup = () => {
   {showToast && (
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg">
       {toastMessage}
-      <div className="mt-2 w-full h-1 bg-green-300">
+      <div className="mt-2 w-full h-1 bg-green-200">
         <div
-          className="h-full bg-green-500"
+          className="h-full bg-green-600"
           style={{ width: `${progressWidth}%`, transition: 'width 0.1s linear' }}
         ></div>
       </div>
