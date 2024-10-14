@@ -12,8 +12,8 @@ const HomePage = () => {
   const [notificationsDropdownOpen, setNotificationsDropdownOpen] =
     useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [newMessage, setNewMessage] = useState(false);
   const navigate = useNavigate();
@@ -170,6 +170,8 @@ const HomePage = () => {
     localStorage.setItem("darkMode", newDarkMode);
   };
 
+  const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
+
   const handleNotificationRead = (id) => {
     setNotifications((prevNotifications) =>
       prevNotifications.map((notification) =>
@@ -208,45 +210,52 @@ const HomePage = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
-          {/* Left Section - Brand and Hamburger Menu */}
+          {/* Left Section - Brand and Navigation */}
           <div className="flex items-center space-x-4">
             <a href="/" className="text-xl font-bold">
               CrowdConnect
             </a>
-            {/* Hamburger Icon for Mobile */}
-            <button
-              className="sm:hidden block text-xl"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation"
-            >
-              <ion-icon name="menu-outline"></ion-icon>
-            </button>
+            <div className="relative md:hidden">
+              <button onClick={handleDropdownToggle}>
+                <ion-icon name="menu-outline"></ion-icon>
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                  <Link
+                    to="/home"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/solutions"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Solutions
+                  </Link>
+                  <Link
+                    to="/problems"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Problems
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className={`hidden sm:flex space-x-4`}>
-            <Link
-              to="/home"
-              className={`${darkMode ? "text-green-400" : "text-gray-700"}`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/solutions"
-              className={`${darkMode ? "text-green-400" : "text-gray-700"}`}
-            >
-              Solutions
-            </Link>
-            <Link
-              to="/problems"
-              className={`${darkMode ? "text-green-400" : "text-gray-700"}`}
-            >
-              Problems
-            </Link>
-          </nav>
-
           {/* Right Section - Search, Notifications, User Profile, and Dark Mode Toggle */}
-          <div className="flex items-center space-x-4 mt-2 sm:mt-0">
+          <div className="flex items-center flex-wrap space-x-4 mt-2 sm:mt-0">
+
             {/* Notifications Dropdown */}
             <div className="relative">
               <button
@@ -323,25 +332,6 @@ const HomePage = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`sm:hidden ${
-            mobileMenuOpen ? "block" : "hidden"
-          } bg-white shadow-md`}
-        >
-          <nav className="flex flex-col p-4 space-y-2">
-            <Link to="/home" className="text-gray-700">
-              Home
-            </Link>
-            <Link to="/solutions" className="text-gray-700">
-              Solutions
-            </Link>
-            <Link to="/problems" className="text-gray-700">
-              Problems
-            </Link>
-          </nav>
-        </div>
       </header>
 
       {/* Main Content */}
@@ -403,7 +393,7 @@ const HomePage = () => {
             />
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md w-full sm:w-auto"
+              className="bg-green-500 text-white px-4 py-2 rounded-md"
             >
               Submit
             </button>
