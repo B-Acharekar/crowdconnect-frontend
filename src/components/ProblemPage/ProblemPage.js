@@ -10,6 +10,7 @@ const ProblemPage = () => {
   const [username, setUsername] = useState(null);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -130,6 +131,7 @@ const ProblemPage = () => {
   const handleDarkModeToggle = () => {
     setDarkMode((prevMode) => !prevMode);
   };
+  const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
 
   return (
     <div
@@ -138,16 +140,52 @@ const ProblemPage = () => {
       }`}
     >
       <header
-        className={`shadow ${
-          darkMode ? "bg-gray-900 text-green-500" : "bg-white text-gray-900"
+        className={`bg-white shadow ${
+          darkMode ? "bg-gray-800 text-gray-100" : "bg-white"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Link to="/" className="text-xl font-bold">
+            <a href="/" className="text-xl font-bold">
               CrowdConnect
-            </Link>
-            <nav className="space-x-4">
+            </a>
+            <div className="relative md:hidden">
+              <button onClick={handleDropdownToggle}>
+                <ion-icon name="menu-outline"></ion-icon>
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                  <Link
+                    to="/home"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/solutions"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Solutions
+                  </Link>
+                  <Link
+                    to="/problems"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Problems
+                  </Link>
+                </div>
+              )}
+            </div>
+            <nav className="hidden md:flex space-x-4">
               <Link
                 to="/home"
                 className={`${darkMode ? "text-green-400" : "text-gray-700"}`}
@@ -169,15 +207,6 @@ const ProblemPage = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              className={`border rounded-md px-4 py-1 ${
-                darkMode
-                  ? "bg-gray-700 text-green-50"
-                  : "bg-white text-gray-900"
-              }`}
-            />
             <button
               onClick={handleDarkModeToggle}
               aria-label="Toggle Dark Mode"
@@ -192,9 +221,9 @@ const ProblemPage = () => {
 
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4">
         <aside
-          className={`col-span-4 rounded-lg shadow p-4 ${
+          className={`rounded-lg shadow p-4 ${
             darkMode ? "bg-gray-800" : "bg-white"
-          } w-full md:w-1/3 lg:w-2/5`}
+          } w-full md:w-1/3 lg:w-2/5 mb-4 md:mb-0`}
         >
           <h2 className="text-xl font-bold">Problems</h2>
           {loading ? (
@@ -243,7 +272,6 @@ const ProblemPage = () => {
           className={`w-full md:w-2/3 p-6 rounded-lg shadow-lg ${
             darkMode ? "bg-gray-700" : "bg-white"
           }`}
-          style={{ marginLeft: "20px" }}
         >
           <h3 className="text-2xl font-bold mb-4">
             {selectedProblem ? "Update Problem" : "Post a Problem"}

@@ -13,6 +13,7 @@ const SolutionsPage = () => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -238,6 +239,8 @@ const SolutionsPage = () => {
     localStorage.setItem("darkMode", newDarkMode);
   };
 
+  const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
+
   const closeEditModal = () => {
     setEditModalOpen(false);
     setEditSolutionId(null);
@@ -262,7 +265,43 @@ const SolutionsPage = () => {
             <a href="/" className="text-xl font-bold">
               CrowdConnect
             </a>
-            <nav className="space-x-4">
+            <div className="relative md:hidden">
+              <button onClick={handleDropdownToggle}>
+                <ion-icon name="menu-outline"></ion-icon>
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                  <Link
+                    to="/home"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/solutions"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Solutions
+                  </Link>
+                  <Link
+                    to="/problems"
+                    className={`block px-4 py-2 text-gray-700 ${
+                      darkMode ? "text-green-400" : "text-gray-700"
+                    }`}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Problems
+                  </Link>
+                </div>
+              )}
+            </div>
+            <nav className="hidden md:flex space-x-4">
               <Link
                 to="/home"
                 className={`${darkMode ? "text-green-400" : "text-gray-700"}`}
@@ -284,15 +323,6 @@ const SolutionsPage = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              className={`border rounded-lg px-4 py-2 ${
-                darkMode
-                  ? "bg-gray-700 text-gray-100 border-gray-600"
-                  : "bg-white text-gray-900"
-              }`}
-            />
             <button
               onClick={handleDarkModeToggle}
               aria-label="Toggle Dark Mode"
@@ -316,6 +346,8 @@ const SolutionsPage = () => {
           <h2 className="text-xl font-bold">Problems</h2>
           {loading ? (
             <p>Loading...</p>
+          ) : problems.length === 0 ? (
+            <p>No problems available.</p> // Placeholder content
           ) : (
             <ul>
               {problems.map((problem) => (
@@ -339,7 +371,7 @@ const SolutionsPage = () => {
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
         >
-          <h2 className="text-xl font-bold">Problems</h2>
+          <h2 className="text-xl font-bold">Solutions</h2>
           {selectedProblemId ? (
             <>
               {/* Display Problem Details */}
@@ -351,7 +383,6 @@ const SolutionsPage = () => {
                   <p>{selectedProblem.description}</p>
                 </div>
               )}
-              <h2 className="text-xl font-bold">Solutions</h2>
               {solutions.length > 0 ? (
                 <ul className="mt-4">
                   {solutions.map((solution) => (
