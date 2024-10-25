@@ -20,19 +20,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better readability */
+  background: rgba(255, 255, 255, 0.1); /* Light frosted effect */
+  backdrop-filter: blur(10px); /* Blur effect for glassmorphism */
   z-index: 1; /* Ensures the overlay is on top */
 }
 
-.navbr{
-  width: 100vw; /* Ensures full width */
-  padding: 0 20px; /* Adds slight padding inside the header */
+.navbar {
+  width: 100vw; /* Full width */
+  padding: 10py 20px; /* Adds slight padding inside the header */
   box-sizing: border-box;
-}
-
-.content {
-  position: relative;
-  z-index: 10; /* Content is above the overlay */
+  background: rgba(255, 255, 255, 0.7); /* Light frosted effect */
+  backdrop-filter: blur(10px); /* Glassmorphism effect */
 }
 
 .logo {
@@ -52,10 +50,6 @@
   color: white; /* Keeps subheadline readable */
 }
 
-.custom-image-width{
-  width: 34rem;
-}
-
 .cta-buttons {
   display: flex;
   justify-content: center;
@@ -63,28 +57,30 @@
 }
 
 .button {
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 10px 10px;
+  border-radius: 8px; /* Slightly rounded corners */
   font-weight: bold;
   transition: background-color 0.3s, transform 0.2s;
 }
 
 .button.primary {
-  background-color: #38a169; /* green-500 */
+  background-color: #1e90ff; /* Vibrant blue color */
+  color: white;
   font-size: 1.1rem;
 }
 
 .button.primary:hover {
-  background-color: #2f855a; /* green-700 */
+  background-color: #007acc; /* Darker blue for hover effect */
   transform: scale(1.05); /* Subtle scale effect */
 }
 
 .button.secondary {
-  background-color: #3182ce; /* blue-500 */
+  background-color: #66cdaa; /* Aqua color */
+  color: white;
 }
 
 .button.secondary:hover {
-  background-color: #2b6cb0; /* blue-700 */
+  background-color: #5bc3a9; /* Slightly darker aqua */
   transform: scale(1.05); /* Subtle scale effect */
 }
 
@@ -103,8 +99,9 @@
 
 .card {
   background: rgba(255, 255, 255, 0.2); /* Light card background */
+  backdrop-filter: blur(8px); /* Glassmorphism effect for feature cards */
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 15px;
   flex: 1;
   margin: 0 10px;
   text-align: center;

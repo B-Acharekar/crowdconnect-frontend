@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import Comment from "../Comment/Comment";
+import "./SolutionPage.css";
 
 const SolutionsPage = () => {
   const [problems, setProblems] = useState([]);
@@ -8,8 +10,11 @@ const SolutionsPage = () => {
   const [selectedProblemId, setSelectedProblemId] = useState(null);
   const [selectedProblem, setSelectedProblem] = useState(null); // Add this line
   const [solutionText, setSolutionText] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("PENDING");
   const [editSolutionId, setEditSolutionId] = useState(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editSolutionModalOpen, seteditSolutionModalOpen] = useState(false);
+  const [editStatusModalOpen, seteditStatusModalOpen] = useState(false);
+  const [isCommentVisible, setIsCommentVisible] = useState(false);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -72,7 +77,7 @@ const SolutionsPage = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
-        setSolutions(data); // Make sure this data includes upvote and downvote counts
+        setSolutions(data); // Make sure this data includes upvote and downvote counts      
       } catch (error) {
         console.error("Error fetching solutions:", error);
         setErrorMessage("Failed to fetch solutions. Please try again.");
@@ -104,6 +109,11 @@ const SolutionsPage = () => {
     }
   };
 
+  const handleUpdateStatus = (newStatus) => {
+    setSelectedStatus(newStatus);
+  };
+  
+  
   const handleSolutionSubmit = async (e) => {
     e.preventDefault();
     if (!token || !selectedProblemId) {
@@ -111,7 +121,7 @@ const SolutionsPage = () => {
       return;
     }
 
-    const solutionData = { description: solutionText, username: currentUser };
+    const solutionData = { description: solutionText, username: currentUser,status: 'PENDING' };
 
     try {
       const response = await fetch(
@@ -139,21 +149,28 @@ const SolutionsPage = () => {
     }
   };
 
-  const handleOpenEditModal = (solution) => {
+  const handleOpeneditSolutionModal = (solution) => {
     setEditSolutionId(solution.id);
     setSolutionText(solution.description);
-    setEditModalOpen(true);
+    setSelectedStatus(solution.status); // Add this line to prefill status
+    seteditSolutionModalOpen(true);
   };
 
-  const handleUpdateSolution = async (e) => {
+  const handleOpeneditStatusModal = (solution) => {
+    setEditSolutionId(solution.id);
+    setSelectedStatus(solution.status); // Add this line to prefill status
+    seteditStatusModalOpen(true);
+  };
+  
+  const handleUpdateSolutionStatus = async (e) => {
     e.preventDefault();
     if (!token || !editSolutionId) return;
 
-    const solutionData = { description: solutionText };
+    const solutionData = { status: selectedStatus};
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/solutions/${editSolutionId}`,
+        `http://localhost:8080/api/solutions/${editSolutionId}/status`,
         {
           method: "PUT",
           headers: {
@@ -173,7 +190,42 @@ const SolutionsPage = () => {
           sol.id === updatedSolution.id ? updatedSolution : sol
         )
       );
-      closeEditModal();
+      closeEditStatusModal();
+    } catch (error) {
+      console.error("Error updating solution:", error);
+      setErrorMessage("Failed to update solution. Please try again.");
+    }
+  };
+
+  const handleUpdateSolution = async (e) => {
+    e.preventDefault();
+    if (!token || !editSolutionId) return;
+
+    const solutionData = { description: solutionText};
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/solutions/${editSolutionId}/description`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(solutionData),
+        }
+      );
+
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const updatedSolution = await response.json();
+      setSolutions((prevSolutions) =>
+        prevSolutions.map((sol) =>
+          sol.id === updatedSolution.id ? updatedSolution : sol
+        )
+      );
+      closeEditSolutionModal();
     } catch (error) {
       console.error("Error updating solution:", error);
       setErrorMessage("Failed to update solution. Please try again.");
@@ -233,6 +285,10 @@ const SolutionsPage = () => {
     }
   };
 
+  const handleCommentDropdown = () => {
+    setIsCommentVisible(prevState => !prevState);
+  };
+
   const handleDarkModeToggle = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
@@ -241,10 +297,16 @@ const SolutionsPage = () => {
 
   const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
 
-  const closeEditModal = () => {
-    setEditModalOpen(false);
+  const closeEditSolutionModal = () => {
+    seteditSolutionModalOpen(false);
     setEditSolutionId(null);
     setSolutionText("");
+    setErrorMessage("");
+  };
+
+  const closeEditStatusModal = () => {
+    seteditStatusModalOpen(false);
+    setEditSolutionId(null);
     setErrorMessage("");
   };
 
@@ -341,7 +403,7 @@ const SolutionsPage = () => {
         <aside
           className={`col-span-4 rounded-lg shadow p-4 ${
             darkMode ? "bg-gray-800" : "bg-white"
-          }`}
+          } maxHeight overflow-y-scroll`}
         >
           <h2 className="text-xl font-bold">Problems</h2>
           {loading ? (
@@ -353,7 +415,7 @@ const SolutionsPage = () => {
               {problems.map((problem) => (
                 <li
                   key={problem.id}
-                  className={`cursor-pointer hover:bg-gray-200 ${
+                  className={`cursor-pointer transition transform hover:scale-105 hover:shadow-lg hover:bg-gray-200 p-2  ${
                     darkMode ? "hover:bg-gray-600" : "hover:bg-gray-200"
                   }`}
                   onClick={() => handleProblemSelect(problem.id)}
@@ -384,7 +446,7 @@ const SolutionsPage = () => {
                 </div>
               )}
               {solutions.length > 0 ? (
-                <ul className="mt-4">
+                <ul className="mt-4 max-h-60 overflow-y-scroll">
                   {solutions.map((solution) => (
                     <li
                       key={solution.id}
@@ -394,12 +456,25 @@ const SolutionsPage = () => {
                       <p className="text-sm text-gray-500">
                         by {solution.username}
                       </p>
+                      <div className="flex items-center space-x-4">
+                      <p>Status: {solution.status}</p>
+                      <span>
+                        wanna update status ?
+                        <button
+                          onClick={() => handleOpeneditStatusModal(solution)}
+                          className="p-1 text-yellow-400 hover:underline"
+                        >
+                          Edit
+                        </button>
+                      </span>
+                      </div>
                       <div className="flex items-center space-x-4 mt-2">
                         <span className="text-gray-600">
                           <button
                             onClick={() => handleVote(solution.id, "upvote")}
                             className="text-blue-500"
                           >
+                            {/* Upvote */}
                             <ion-icon name="thumbs-up-sharp"></ion-icon>
                           </button>
                           <span className="px-1">
@@ -411,12 +486,15 @@ const SolutionsPage = () => {
                             onClick={() => handleVote(solution.id, "downvote")}
                             className="text-red-500"
                           >
-                            👎
+                            {/* Down Vote */}
+                          <ion-icon name="thumbs-down-sharp"></ion-icon>
                           </button>
-                          {solution.downvoteCount || 0}
+                          <span className="px-1">
+                            {solution.downvoteCount || 0}
+                          </span>
                         </span>
                         <button
-                          onClick={() => handleOpenEditModal(solution)}
+                          onClick={() => handleOpeneditSolutionModal(solution)}
                           className="text-yellow-500"
                         >
                           Edit
@@ -428,13 +506,21 @@ const SolutionsPage = () => {
                           Delete
                         </button>
                       </div>
+                      <p
+                        onClick={handleCommentDropdown}
+                        className="text-green-500 cursor-pointer hover:text-green-700 transition-all duration-300 hover:underline ease-in-out"
+                      >
+                        Add your thoughts
+                      </p>
+                      {/* Conditionally render the Comment component */}
+                      {isCommentVisible && <Comment solutionId={solution.id} currentUser={currentUser} />}
                     </li>
                   ))}
                 </ul>
               ) : (
                 <p>No solutions yet for this problem.</p>
               )}
-              <form onSubmit={handleSolutionSubmit}>
+              <form onSubmit={handleSolutionSubmit} className="mt-1 p-1">
                 <textarea
                   className={`w-full rounded-lg border p-2 ${
                     darkMode
@@ -448,10 +534,10 @@ const SolutionsPage = () => {
                 />
                 <button
                   type="submit"
-                  className={`mt-2 rounded-lg py-2 px-4 transition-colors duration-300 ${
+                  className={`mt-2 rounded-lg py-2 px-4 transition-colors duration-300 transition transform hover:scale-105 hover:shadow-lg ${
                     darkMode
-                      ? "bg-blue-600 text-gray-100"
-                      : "bg-blue-500 text-white"
+                      ? "bg-green-600 text-gray-100"
+                      : "bg-green-500 text-white"
                   }`}
                 >
                   Submit Solution
@@ -463,52 +549,109 @@ const SolutionsPage = () => {
           )}
 
           {/* Edit Solution Modal */}
-          {editModalOpen && (
+          {editSolutionModalOpen && (
             <div
-              className={`fixed inset-0 flex items-center justify-center ${
-                darkMode
-                  ? "bg-gray-900 bg-opacity-75"
-                  : "bg-gray-100 bg-opacity-75"
+              className={`fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300 ${
+                darkMode ? "bg-gray-900 bg-opacity-80" : "bg-gray-100 bg-opacity-80"
               }`}
             >
               <div
-                className={`bg-white rounded-lg shadow-lg p-6 ${
-                  darkMode ? "bg-gray-800 text-gray-100" : "bg-white"
+                className={`w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl p-6 transform transition-transform duration-300 ${
+                  darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
                 }`}
               >
-                <h3 className="text-lg font-bold">Edit Solution</h3>
+                <h3 className="text-xl font-semibold mb-4">Edit Solution</h3>
                 <form onSubmit={handleUpdateSolution}>
                   <textarea
-                    className={`w-full rounded-lg border p-2 ${
+                    className={`w-full h-32 rounded-md border p-3 outline-none focus:ring-2 transition-all duration-300 ${
                       darkMode
-                        ? "bg-gray-700 text-gray-100"
-                        : "bg-white text-gray-900"
+                        ? "bg-gray-700 text-gray-100 border-gray-600 focus:ring-blue-600"
+                        : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"
                     }`}
                     value={solutionText}
                     onChange={(e) => setSolutionText(e.target.value)}
+                    placeholder="Edit your solution here..."
                     required
                   />
-                  <div className="flex justify-between mt-4">
+                  <div className="flex justify-end gap-4 mt-6">
                     <button
                       type="button"
-                      className={`bg-gray-300 rounded-lg px-4 py-2 ${
-                        darkMode ? "text-gray-900" : "text-gray-800"
+                      className={`rounded-md px-5 py-2 font-medium transition-colors duration-300 border ${
+                        darkMode
+                          ? "bg-gray-700 text-gray-200 border-gray-500 hover:bg-gray-600"
+                          : "bg-gray-300 text-gray-800 border-gray-300 hover:bg-gray-400"
                       }`}
-                      onClick={closeEditModal}
+                      onClick={closeEditSolutionModal}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className={`rounded-lg py-2 px-4 transition-colors duration-300 ${
+                      className={`rounded-md px-5 py-2 font-medium transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                         darkMode
-                          ? "bg-blue-600 text-gray-100"
-                          : "bg-blue-500 text-white"
+                          ? "bg-blue-600 text-gray-100 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-900"
+                          : "bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400 focus:ring-offset-white"
                       }`}
                     >
                       Update Solution
                     </button>
                   </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {editStatusModalOpen && (
+            <div
+              className={`fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300 ${
+                darkMode ? "bg-gray-900 bg-opacity-80" : "bg-gray-100 bg-opacity-80"
+              }`}
+            >
+              <div
+                className={`w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl p-6 transform transition-transform duration-300 ${
+                  darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"
+                }`}
+              >
+                <h3 className="text-xl font-semibold mb-4">Edit Status</h3>
+                <form onSubmit={handleUpdateSolutionStatus} className="p-4">
+                        <div className="flex items-center space-x-2">
+                          <label className="text-gray-700 font-bold" htmlFor="status">
+                            Status:
+                          </label>
+                          <select
+                            id="status"
+                            placeholder="Select solution status..."
+                            value={selectedStatus}
+                            onChange={(e) => handleUpdateStatus(e.target.value)}
+                            className={`flex-grow border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${ darkMode
+                              ? "bg-gray-700 text-gray-200 border-gray-500 hover:bg-gray-600"
+                              : "bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
+                          }`}
+                          >
+                            <option value="PENDING">Pending</option>
+                            <option value="ACCEPTED">Accepted</option>
+                            <option value="REJECTED">Rejected</option>
+                          </select>
+                        </div>
+                        <div className="flex mt-2 space-x-2">
+                        <button
+                      type="button"
+                      className={`rounded-md px-5 py-2 font-medium transition-colors duration-300 border ${
+                        darkMode
+                          ? "bg-gray-700 text-gray-200 border-gray-500 hover:bg-gray-600"
+                          : "bg-white-300 text-gray-800 border-gray-300 hover:bg-gray-400"
+                      }`}
+                      onClick={closeEditStatusModal}
+                    >
+                      Cancel
+                    </button>
+                          <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
+                          >
+                            Submit
+                          </button>
+                        </div>
                 </form>
               </div>
             </div>

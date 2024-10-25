@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import "./ProblemPosting.css";
 
 const ProblemPage = () => {
   const [title, setTitle] = useState("");
@@ -219,55 +220,7 @@ const ProblemPage = () => {
         </div>
       </header>
 
-      <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4">
-        <aside
-          className={`rounded-lg shadow p-4 ${
-            darkMode ? "bg-gray-800" : "bg-white"
-          } w-full md:w-1/3 lg:w-2/5 mb-4 md:mb-0`}
-        >
-          <h2 className="text-xl font-bold">Problems</h2>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <ul className="space-y-4">
-              {problems.map((problem) => (
-                <li
-                  key={problem.id}
-                  className={`${
-                    darkMode ? "bg-gray-500" : "bg-white"
-                  } border rounded p-4`}
-                >
-                  <h4 className="text-xl font-semibold mb-2">
-                    {problem.title}
-                  </h4>
-                  <p className="text-gray-300 mb-2">{problem.description}</p>
-                  <span className="text-gray-400 text-sm">
-                    Posted by: {problem.user?.username || "Unknown"}
-                  </span>
-                  <div className="flex justify-end mt-4 space-x-2">
-                    {username === problem.user?.username && (
-                      <>
-                        <button
-                          onClick={() => handleUpdate(problem)}
-                          className="text-yellow-500"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(problem.id)}
-                          className="text-red-500"
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </aside>
-
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto space-x-6 p-4">
         <main
           className={`w-full md:w-2/3 p-6 rounded-lg shadow-lg ${
             darkMode ? "bg-gray-700" : "bg-white"
@@ -318,6 +271,53 @@ const ProblemPage = () => {
             </button>
           </form>
         </main>
+        <aside
+          className={`rounded-lg shadow p-4 ${
+            darkMode ? "bg-gray-800" : "bg-white"
+          } w-full md:w-1/3 lg:w-2/5 mb-4 md:mb-0 maxHeight overflow-y-scroll`}
+        >
+          <h2 className="text-xl font-bold">Problems</h2>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ul className="space-y-4">
+              {problems.map((problem) => (
+                <li
+                  key={problem.id}
+                  className={`${
+                    darkMode ? "bg-gray-800" : "bg-white"
+                  } border rounded p-4`}
+                >
+                  <h4 className="text-xl font-semibold mb-2">
+                    {problem.title}
+                  </h4>
+                  <p className="text-gray-600 mb-2">{problem.description}</p>
+                  <span className="text-gray-500 text-sm">
+                    Posted by: {problem.user?.username || "Unknown"}
+                  </span>
+                  <div className="flex justify-end mt-4 space-x-2">
+                    {username === problem.user?.username && (
+                      <>
+                        <button
+                          onClick={() => handleUpdate(problem)}
+                          className="text-yellow-500"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(problem.id)}
+                          className="text-red-500"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </aside>
       </div>
     </div>
   );

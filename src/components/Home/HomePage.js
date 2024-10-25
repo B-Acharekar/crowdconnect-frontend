@@ -165,10 +165,13 @@ const HomePage = () => {
   };
 
   const handleDarkModeToggle = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", newDarkMode);
+    setDarkMode(prevDarkMode => {
+      document.body.classList.toggle("dark-mode", !prevDarkMode);
+      localStorage.setItem("darkMode", !prevDarkMode);
+      return !prevDarkMode;
+    });
   };
+  
 
   const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
 
@@ -200,15 +203,11 @@ const HomePage = () => {
   return (
     <div
       className={`min-h-screen ${
-        darkMode ? "bg-black text-green-500" : "bg-green-200 text-gray-900"
+        darkMode ? "bg-black text-white" : "bg-green-200 text-gray-900"
       }`}
     >
       {/* Header */}
-      <header
-        className={`shadow ${
-          darkMode ? "bg-gray-900 text-green-500" : "bg-white text-gray-900"
-        }`}
-      >
+      <header className={`shadow ${  darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"  }`} >
         <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
           {/* Left Section - Brand and Navigation */}
           <div className="flex items-center space-x-4">
@@ -219,38 +218,35 @@ const HomePage = () => {
               <button onClick={handleDropdownToggle}>
                 <ion-icon name="menu-outline"></ion-icon>
               </button>
+              {/* Dropdown for mobile */}
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
-                  <Link
-                    to="/home"
-                    className={`block px-4 py-2 text-gray-700 ${
-                      darkMode ? "text-green-400" : "text-gray-700"
-                    }`}
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    to="/solutions"
-                    className={`block px-4 py-2 text-gray-700 ${
-                      darkMode ? "text-green-400" : "text-gray-700"
-                    }`}
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Solutions
-                  </Link>
-                  <Link
-                    to="/problems"
-                    className={`block px-4 py-2 text-gray-700 ${
-                      darkMode ? "text-green-400" : "text-gray-700"
-                    }`}
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Problems
-                  </Link>
+                  <Link to="/home" className="block px-4 py-2 text-gray-700" onClick={() => setDropdownOpen(false)}>Home</Link>
+                  <Link to="/solutions" className="block px-4 py-2 text-gray-700" onClick={() => setDropdownOpen(false)}>Solutions</Link>
+                  <Link to="/problems" className="block px-4 py-2 text-gray-700" onClick={() => setDropdownOpen(false)}>Problems</Link>
                 </div>
               )}
             </div>
+            <nav className="hidden md:flex space-x-4">
+              <Link
+                to="/home"
+                className={`${darkMode ? "text-white" : "text-gray-700"}`}
+              >
+                Home
+              </Link>
+              <Link
+                to="/solutions"
+                className={`${darkMode ? "text-white" : "text-gray-700"}`}
+              >
+                Solutions
+              </Link>
+              <Link
+                to="/problems"
+                className={`${darkMode ? "text-white" : "text-gray-700"}`}
+              >
+                Problems
+              </Link>
+            </nav>
           </div>
 
           {/* Right Section - Search, Notifications, User Profile, and Dark Mode Toggle */}
@@ -336,13 +332,13 @@ const HomePage = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-4 flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-        {/* Active Account */}
+        {/* Recently joined Account */}
         <aside
-          className={`w-full lg:w-1/4 ${
+          className={`w-full lg:w-1/4 max-h-64 ${
             darkMode ? "bg-gray-800" : "bg-white"
-          } shadow p-4 rounded-md`}
+          } shadow p-4 rounded-md  max-h-96 overflow-y-scroll`}
         >
-          <h2 className="text-lg font-semibold mb-4">Active Account</h2>
+          <h2 className="text-lg font-semibold mb-4">Recently joined account</h2>
           <ul>
             {activeUsers.length > 0 ? (
               activeUsers.map((user) => (
@@ -361,11 +357,7 @@ const HomePage = () => {
         </aside>
 
         {/* Problem Posting Form */}
-        <section
-          className={`flex-1 ${
-            darkMode ? "bg-gray-800" : "bg-white"
-          } shadow p-4 rounded-md`}
-        >
+        <section className={`flex-1 ${ darkMode ? "bg-gray-800" : "bg-white" } shadow p-4 rounded-md`} >
           <h2 className="text-lg font-semibold mb-4">Post Your Problem</h2>
           <form onSubmit={handleProblemSubmit} className="mb-4">
             <input
@@ -375,7 +367,7 @@ const HomePage = () => {
               placeholder="Title"
               className={`border rounded-md w-full mb-2 px-2 py-1 ${
                 darkMode
-                  ? "bg-gray-700 text-green-500"
+                  ? "bg-gray-700 text-white"
                   : "bg-white text-gray-900"
               }`}
               required
@@ -386,14 +378,14 @@ const HomePage = () => {
               placeholder="Description"
               className={`border rounded-md w-full mb-2 px-2 py-1 ${
                 darkMode
-                  ? "bg-gray-700 text-green-500"
+                  ? "bg-gray-700 text-white"
                   : "bg-white text-gray-900"
               }`}
               required
             />
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md"
+              className="bg-green-500  rounded text-white px-4 py-2 hover:shadow-lg transition transform hover:scale-105"
             >
               Submit
             </button>
@@ -405,16 +397,16 @@ const HomePage = () => {
             {loading ? (
               <li>Loading problems...</li>
             ) : (
-              problems.map((problem) => (
-                <li key={problem.id} className="py-2">
-                  <Link
-                    to={`/solutions`}
-                    className="text-grey-500 hover:underline"
-                  >
-                    {problem.title}
-                  </Link>
-                </li>
-              ))
+                <div className="h-[300px] lg:h-[400px] border rounded-lg shadow-lg p-2 max-h-80 overflow-y-scroll">
+                  {problems.map((problem) => (
+                    <div key={problem.id} className="p-4 border-b">
+                      <Link to={`/solutions`} className={`${ darkMode ? "text-white" : "text-gray-800"}text-gray-800 inline-block hover:underline`}>
+                      <h3 className= "font-semibold text-md">{problem.title}</h3>
+                      </Link>
+                      <p className={`${ darkMode ? "text-gray-200" : "text-gray-600"}`}>{problem.description}</p>
+                    </div>
+                  ))}
+                </div>
             )}
           </ul>
         </section>

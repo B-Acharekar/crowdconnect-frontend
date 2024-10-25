@@ -26,3 +26,6 @@
     animation: fadeIn 1s ease-in forwards;
   }
   
+  .maxHeight{
+    max-height: 37rem;
+  }
